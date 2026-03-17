@@ -27,7 +27,19 @@ RESET  = "\033[0m"
 
 
 def load_artifacts():
-    """Load model and scaler from disk."""
+    """
+    Load model and scaler from disk.
+    If .pkl files don't exist (e.g. on Streamlit Cloud first run),
+    auto-generate data and train the model on the fly.
+    """
+    import os
+    if not os.path.exists("isolation_forest.pkl") or not os.path.exists("scaler.pkl"):
+        # Auto-train: import here to avoid circular imports
+        from data_generator import generate_dataset
+        from train_model import train
+        df = generate_dataset()
+        train(df)
+
     model  = joblib.load("isolation_forest.pkl")
     scaler = joblib.load("scaler.pkl")
     return model, scaler

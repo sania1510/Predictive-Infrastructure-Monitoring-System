@@ -95,6 +95,11 @@ def get_model():
 
 @st.cache_data
 def get_dataset():
+    import os
+    if not os.path.exists("infrastructure_metrics.csv"):
+        from data_generator import generate_dataset
+        df = generate_dataset()
+        df.to_csv("infrastructure_metrics.csv", index=False)
     df = pd.read_csv("infrastructure_metrics.csv", parse_dates=["timestamp"])
     return df
 
